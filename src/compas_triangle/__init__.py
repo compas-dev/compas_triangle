@@ -32,6 +32,7 @@ DATA = os.path.abspath(os.path.join(HOME, "data"))
 DOCS = os.path.abspath(os.path.join(HOME, "docs"))
 TEMP = os.path.abspath(os.path.join(HOME, "temp"))
 
+
 # Check if package is installed from git
 # If that's the case, try to append the current head's hash to __version__
 try:
@@ -52,5 +53,6 @@ try:
                 __version__ += '-' + git_commit[:8]
 except Exception:
     pass
+
 
 __all__ = ["HOME", "DATA", "DOCS", "TEMP"]
