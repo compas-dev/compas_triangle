@@ -103,7 +103,10 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None, 
             centroid = centroid_points_xy(points)
             holes.append(centroid[:2])
 
-    data = {'vertices': vertices, 'segments': segments, 'holes': holes}
+    data = {'vertices': vertices, 'segments': segments}
+    if len(holes)>0:
+        data['holes'] = holes
+
     if area:
         result = triangulate(data, opts='pa{}q'.format(area))
     else:
