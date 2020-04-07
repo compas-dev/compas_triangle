@@ -11,6 +11,7 @@ from compas.geometry import centroid_points_xy
 __all__ = [
     'delaunay_triangulation',
     'constrained_delaunay_triangulation',
+    'conforming_delaunay_triangulation',
 ]
 
 
@@ -44,7 +45,7 @@ def delaunay_triangulation(points):
     return vertices, faces
 
 
-def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None, area=None):
+def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     """Construct a Delaunay triangulation of set of vertices, constrained to the specified segments.
 
     Parameters
@@ -55,8 +56,6 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None, 
         Lists of ordered points defining internal guide curves.
     polygons : list, optional
         Lists of ordered points defining holes in the triangulation.
-    area : float, optional
-        Area constraint for the triangulation.
 
     Returns
     -------
@@ -66,8 +65,7 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None, 
 
     Notes
     -----
-    No additional vertices (Steiner points) will be inserted.
-    Therefore not all faces of the triangulation will be Delaunay.
+    No additional points will be inserted in the triangulation.
 
     Examples
     --------
@@ -104,57 +102,99 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None, 
             holes.append(centroid[:2])
 
     data = {'vertices': vertices, 'segments': segments}
-    if len(holes)>0:
+
+    if len(holes) > 0:
         data['holes'] = holes
 
-    if area:
-        result = triangulate(data, opts='pa{}q'.format(area))
-    else:
-        result = triangulate(data, opts='pq')
+    result = triangulate(data, opts='p')
+
     vertices = [[x, y, 0] for x, y in result['vertices']]
     faces = result['triangles']
     return vertices, faces
 
 
-# def conforming_delaunay_triangulation(points, segments):
-#     """Construct a Delaunay triangulation of set of vertices,
-#     constrained to the specified segments,
-#     and with as many Steiner points inserted as necessary to make sure all faces
-#     of the triangulation are Delaunay.
+def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, angle=None, area=None):
+    """Construct a Conforming Delaunay triangulation of set of vertices, constrained to the specified segments.
 
-#     Parameters
-#     ----------
-#     points : list
-#         XY(Z) coordinates of the points to triangulate.
-#     segments : list
-#         A list of point index pairs, to indicate which straight line segments
-#         should be included in the triangulation.
+    Parameters
+    ----------
+    boundary : list
+        Ordered points on the boundary.
+    polylines : list, optional
+        Lists of ordered points defining internal guide curves.
+    polygons : list, optional
+        Lists of ordered points defining holes in the triangulation.
+    angle : float, optional
+        Minimum angle constraint for the triangles of the triangulation.
+        If an angle constraint is given, "Steiner points" may be inserted internally
+        and along the constraint segments to satisfy the constraint.
+        The angle constraint should be specified in degrees.
+    area : float, optional
+        Maximum area constraint for the triangles of the triangulation.
+        If an area constraint is given, "Steiner points" may be inserted internally
+        and along the constraint segments to satisfy the constraint.
 
-#     Returns
-#     -------
-#     tuple
-#         The vertices of the triangulation and the faces of the triangulation.
+    Returns
+    -------
+    tuple
+        * The vertices of the triangulation.
+        * The faces of the triangulation.
 
-#     Notes
-#     -----
-#     Concavities will be removed automatically.
-#     Therefore, the boundary of the triangulation should be included in the specification
-#     of segments to avoid unexpected results.
+    Examples
+    --------
+    >>>
 
-#     References
-#     ----------
-#     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
+    References
+    ----------
+    https://www.cs.cmu.edu/~quake/triangle.delaunay.html
 
-#     Examples
-#     --------
-#     >>>
+    """
+    gkey_xyz = {geo(point): point[:2] for point in boundary}
 
-#     """
-#     data = {'vertices': [point[0:2] for point in points], 'segments': segments}
-#     result = triangulate(data, opts='pq0D')
-#     vertices = [[x, y, 0.0] for x, y in result['vertices']]
-#     faces = result['triangles']
-#     return vertices, faces
+    if polylines:
+        for polyline in polylines:
+            gkey_xyz.update({geo(point): point[:2] for point in polyline})
+    if polygons:
+        for polygon in polygons:
+            gkey_xyz.update({geo(point): point[:2] for point in polygon})
+
+    gkey_index = {gkey: index for index, gkey in enumerate(gkey_xyz)}
+
+    vertices = list(gkey_xyz.values())
+    segments = [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(boundary)]
+    holes = []
+
+    if polylines:
+        for polyline in polylines:
+            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polyline)]
+    if polygons:
+        for polygon in polygons:
+            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polygon)]
+            points = [vertices[gkey_index[geo(point)]] for point in polygon]
+            centroid = centroid_points_xy(points)
+            holes.append(centroid[:2])
+
+    data = {'vertices': vertices, 'segments': segments}
+
+    if len(holes) > 0:
+        data['holes'] = holes
+
+    opts = 'pq'
+
+    if angle:
+        opts = '{}{}'.format(opts, angle)
+
+    if area:
+        opts = '{}a{}'.format(opts, area)
+
+    if opts == 'pq':
+        opts = 'pq0D'
+
+    result = triangulate(data, opts=opts)
+
+    vertices = [[x, y, 0] for x, y in result['vertices']]
+    faces = result['triangles']
+    return vertices, faces
 
 
 # ==============================================================================
