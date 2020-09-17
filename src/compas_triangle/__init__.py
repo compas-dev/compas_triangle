@@ -16,6 +16,7 @@ from __future__ import print_function
 
 import os
 import sys
+import compas
 
 
 __author__ = ["tom van mele"]
@@ -54,5 +55,7 @@ try:
 except Exception:
     pass
 
+
+__all_plugins__ = ['compas_triangle.delaunay']
 
 __all__ = ["HOME", "DATA", "DOCS", "TEMP"]

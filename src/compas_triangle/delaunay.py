@@ -7,6 +7,8 @@ from compas.utilities import pairwise
 from compas.utilities import geometric_key_xy as geo
 from compas.geometry import centroid_points_xy
 
+from compas.plugins import plugin
+
 
 __all__ = [
     'delaunay_triangulation',
@@ -15,6 +17,7 @@ __all__ = [
 ]
 
 
+@plugin(category='triangulation')
 def delaunay_triangulation(points):
     """Construct a Delaunay triangulation of set of vertices.
 
@@ -45,6 +48,7 @@ def delaunay_triangulation(points):
     return vertices, faces
 
 
+@plugin(category='triangulation')
 def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     """Construct a Delaunay triangulation of set of vertices, constrained to the specified segments.
 
@@ -113,6 +117,7 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     return vertices, faces
 
 
+@plugin(category='triangulation')
 def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, angle=None, area=None):
     """Construct a Conforming Delaunay triangulation of set of vertices, constrained to the specified segments.
 
