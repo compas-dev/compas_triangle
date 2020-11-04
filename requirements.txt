@@ -1,1 +1,2 @@
 triangle
+compas >= 0.17.1
