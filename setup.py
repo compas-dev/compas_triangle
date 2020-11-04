@@ -28,7 +28,7 @@ optional_requirements = {}
 
 setup(
     name="compas_triangle",
-    version="0.1.0",
+    version="1.0.0",
     description="COMPAS-firendly wrappers for the tTriangle library.",
     long_description=long_description,
     long_description_content_type="text/markdown",
