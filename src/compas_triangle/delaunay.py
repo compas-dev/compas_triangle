@@ -154,6 +154,7 @@ def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, a
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
 
     """
+    boundary = boundary + boundary[:1] if boundary[0] != boundary[-1] else boundary
     gkey_xyz = {geo(point): point[:2] for point in boundary}
 
     if polylines:
