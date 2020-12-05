@@ -28,8 +28,9 @@ for index, point in enumerate(points):
     if gkey in gkey_key:
         key_index[gkey_key[gkey]] = str(index)
 
-plotter = MeshPlotter(mesh, figsize=(8, 5))
+plotter = MeshPlotter(mesh, figsize=(16, 10))
 plotter.defaults['vertex.fontsize'] = 6
 plotter.draw_faces()
 plotter.draw_vertices(keys=key_index, text=key_index)
-plotter.show()
+# plotter.show()
+plotter.save('examples/delaunay3.png')
