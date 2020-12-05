@@ -112,5 +112,5 @@ temp/**
 !temp/PLACEHOLDER
 
 .DS_Store
-/data/Thumbs.db
-/.vscode/settings.json
+Thumbs.db
+.vscode/
