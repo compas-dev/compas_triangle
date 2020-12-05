@@ -9,7 +9,7 @@ from compas_rhino.geometry import RhinoCurve
 from compas_rhino.artists import MeshArtist
 
 # create a proxy for the delaunay module of compas_triangle
-triangle = Proxy('compas_triangle.delaunay')
+triangle = Proxy('compas.geometry')
 
 # set a target length
 L = 0.5

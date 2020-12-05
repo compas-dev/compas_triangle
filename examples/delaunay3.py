@@ -1,7 +1,7 @@
 from compas.datastructures import Mesh
 from compas.utilities import geometric_key
 from compas_plotters import MeshPlotter
-from compas_triangle.delaunay import conforming_delaunay_triangulation
+from compas.geometry import conforming_delaunay_triangulation
 
 points = [
     [2.994817685045075, 10.855606612493078, 0.0],
@@ -16,7 +16,7 @@ points = [
     [5.2909301507195865, 6.342692886748852, 0.0]
 ]
 
-vertices, faces = conforming_delaunay_triangulation(points + points[:1], angle=30, area=0.01)
+vertices, faces = conforming_delaunay_triangulation(points, angle=30, area=0.01)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 

@@ -15,7 +15,7 @@ points = [
     [5.2909301507195865, 6.342692886748852, 0.0]
 ]
 
-vertices, faces = constrained_delaunay_triangulation(points + points[:1])
+vertices, faces = constrained_delaunay_triangulation(points)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 
