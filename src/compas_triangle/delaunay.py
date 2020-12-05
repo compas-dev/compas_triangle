@@ -17,6 +17,43 @@ __all__ = [
 ]
 
 
+def _to_vertices_segments_holes(boundary, polylines, polygons):
+    if geo(boundary[0]) != geo(boundary[-1]):
+        boundary.append(boundary[0])
+
+    gkey_xyz = {geo(point): point[:2] for point in boundary}
+
+    if polylines:
+        for polyline in polylines:
+            gkey_xyz.update({geo(point): point[:2] for point in polyline})
+
+    if polygons:
+        for polygon in polygons:
+            if geo(polygon[0]) != geo(polygon[-1]):
+                polygon.append(polygon[0])
+
+            gkey_xyz.update({geo(point): point[:2] for point in polygon})
+
+    gkey_index = {gkey: index for index, gkey in enumerate(gkey_xyz)}
+
+    vertices = list(gkey_xyz.values())
+    segments = [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(boundary)]
+    holes = []
+
+    if polylines:
+        for polyline in polylines:
+            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polyline)]
+
+    if polygons:
+        for polygon in polygons:
+            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polygon)]
+            points = [vertices[gkey_index[geo(point)]] for point in polygon]
+            centroid = centroid_points_xy(points)
+            holes.append(centroid[:2])
+
+    return vertices, segments, holes
+
+
 @plugin(category='triangulation')
 def delaunay_triangulation(points):
     """Construct a Delaunay triangulation of set of vertices.
@@ -80,30 +117,7 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
 
     """
-    gkey_xyz = {geo(point): point[:2] for point in boundary}
-
-    if polylines:
-        for polyline in polylines:
-            gkey_xyz.update({geo(point): point[:2] for point in polyline})
-    if polygons:
-        for polygon in polygons:
-            gkey_xyz.update({geo(point): point[:2] for point in polygon})
-
-    gkey_index = {gkey: index for index, gkey in enumerate(gkey_xyz)}
-
-    vertices = list(gkey_xyz.values())
-    segments = [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(boundary)]
-    holes = []
-
-    if polylines:
-        for polyline in polylines:
-            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polyline)]
-    if polygons:
-        for polygon in polygons:
-            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polygon)]
-            points = [vertices[gkey_index[geo(point)]] for point in polygon]
-            centroid = centroid_points_xy(points)
-            holes.append(centroid[:2])
+    vertices, segments, holes = _to_vertices_segments_holes(boundary, polylines, polygons)
 
     data = {'vertices': vertices, 'segments': segments}
 
@@ -154,30 +168,7 @@ def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, a
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
 
     """
-    gkey_xyz = {geo(point): point[:2] for point in boundary}
-
-    if polylines:
-        for polyline in polylines:
-            gkey_xyz.update({geo(point): point[:2] for point in polyline})
-    if polygons:
-        for polygon in polygons:
-            gkey_xyz.update({geo(point): point[:2] for point in polygon})
-
-    gkey_index = {gkey: index for index, gkey in enumerate(gkey_xyz)}
-
-    vertices = list(gkey_xyz.values())
-    segments = [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(boundary)]
-    holes = []
-
-    if polylines:
-        for polyline in polylines:
-            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polyline)]
-    if polygons:
-        for polygon in polygons:
-            segments += [(gkey_index[geo(a)], gkey_index[geo(b)]) for a, b in pairwise(polygon)]
-            points = [vertices[gkey_index[geo(point)]] for point in polygon]
-            centroid = centroid_points_xy(points)
-            holes.append(centroid[:2])
+    vertices, segments, holes = _to_vertices_segments_holes(boundary, polylines, polygons)
 
     data = {'vertices': vertices, 'segments': segments}
 
