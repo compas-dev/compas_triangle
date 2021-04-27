@@ -126,7 +126,7 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
 
     result = triangulate(data, opts='p')
 
-    vertices = [[x, y, 0] for x, y in result['vertices']]
+    vertices = [[x, y, 0.0] for x, y in result['vertices']]
     faces = result['triangles']
     return vertices, faces
 
