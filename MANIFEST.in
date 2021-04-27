@@ -6,6 +6,7 @@ prune data
 prune docs
 prune docsource
 prune examples
+prune scripts
 prune temp
 prune tests
 
@@ -15,7 +16,7 @@ include AUTHORS.md
 include CHANGELOG.md
 include requirements.txt
 
-exclude requirements-dev.txt 
+exclude requirements-dev.txt
 exclude pytest.ini .bumpversion.cfg .editorconfig
 exclude tasks.py
 exclude CONTRIBUTING.md
