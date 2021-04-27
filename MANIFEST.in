@@ -11,6 +11,7 @@ prune temp
 prune tests
 
 include LICENSE
+include LICENSE.Triangle
 include README.md
 include AUTHORS.md
 include CHANGELOG.md
