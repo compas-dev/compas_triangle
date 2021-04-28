@@ -113,12 +113,12 @@ def docs(ctx, doctest=False, rebuild=True, check_links=False):
 
     with chdir(BASE_FOLDER):
         if doctest:
-            ctx.run('sphinx-build -E -b doctest docsource docs')
+            ctx.run('sphinx-build -E -b doctest docs dist/docs')
 
-        ctx.run('sphinx-build -E -b html docsource docs')
+        ctx.run('sphinx-build -E -b html docs dist/docs')
 
         if check_links:
-            ctx.run('sphinx-build -E -b linkcheck docsource docs')
+            ctx.run('sphinx-build -E -b linkcheck docs dist/docs')
 
 
 @task()
