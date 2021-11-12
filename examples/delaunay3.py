@@ -1,6 +1,6 @@
 from compas.datastructures import Mesh
 from compas.utilities import geometric_key
-from compas_plotters import MeshPlotter
+from compas_plotters import Plotter
 from compas.geometry import conforming_delaunay_triangulation
 
 points = [
@@ -16,7 +16,7 @@ points = [
     [5.2909301507195865, 6.342692886748852, 0.0]
 ]
 
-vertices, faces = conforming_delaunay_triangulation(points, angle=30, area=0.01)
+vertices, faces = conforming_delaunay_triangulation(points, angle=30, area=0.02)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 
@@ -28,9 +28,7 @@ for index, point in enumerate(points):
     if gkey in gkey_key:
         key_index[gkey_key[gkey]] = str(index)
 
-plotter = MeshPlotter(mesh, figsize=(16, 10))
-plotter.defaults['vertex.fontsize'] = 6
-plotter.draw_faces()
-plotter.draw_vertices(keys=key_index, text=key_index)
-# plotter.show()
-plotter.save('examples/delaunay3.png')
+plotter = Plotter(figsize=(8, 8))
+plotter.add(mesh, sizepolicy='absolute', vertexsize=2.0)
+plotter.zoom_extents()
+plotter.show()

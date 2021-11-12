@@ -8,8 +8,12 @@ import compas_rhino
 from compas_rhino.geometry import RhinoCurve
 from compas_rhino.artists import MeshArtist
 
+from compas_triangle.rhino import discretise_boundary
+from compas_triangle.rhino import discretise_constraints
+
 # create a proxy for the delaunay module of compas_triangle
-triangle = Proxy('compas.geometry')
+triangle = Proxy('compas_triangle.delaunay')
+triangle.restart_server()
 
 # set a target length
 L = 0.5
@@ -25,39 +29,22 @@ Q = 30
 # note that the boundary is required
 # however, the holes and constraint curves are optional
 boundary_guids = compas_rhino.select_curves('Select boundary curves.')
+compas_rhino.rs.UnselectAllObjects()
+
 hole_guids = compas_rhino.select_curves('Select inner boundaries.')
+compas_rhino.rs.UnselectAllObjects()
+
 segments_guids = compas_rhino.select_curves('Select constraint curves.')
+compas_rhino.rs.UnselectAllObjects()
 
 # discretise the boundary according to the target length
-boundary = []
-for guid in boundary_guids:
-    compas_rhino.rs.EnableRedraw(False)
-    segments = compas_rhino.rs.ExplodeCurves(guid)
-    for segment in segments:
-        curve = RhinoCurve.from_guid(segment)
-        N = int(curve.length() / L)
-        points = curve.divide(N, over_space=True)
-        boundary.extend(map(list, points))
-    compas_rhino.rs.DeleteObjects(segments)
-    compas_rhino.rs.EnableRedraw(True)
+boundary = discretise_boundary(boundary_guids, L)
 
 # discretise the constraint curves
-polylines = []
-if segments_guids:
-    for guid in segments_guids:
-        curve = RhinoCurve.from_guid(guid)
-        N = int(curve.length() / L)
-        points = curve.divide(N, over_space=True)
-        polylines.append(map(list, points))
+polylines = discretise_constraints(segments_guids, L)
 
 # discretise the internal boundaries or "holes"
-polygons = []
-if hole_guids:
-    for guid in hole_guids:
-        curve = RhinoCurve.from_guid(guid)
-        N = int(curve.length() / L)
-        points = curve.divide(N, over_space=True)
-        polygons.append(map(list, points))
+polygons = discretise_constraints(hole_guids, L)
 
 # generate a Conforming Delaunay Triangulation
 # use the angle constraint or the area constraint

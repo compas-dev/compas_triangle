@@ -10,13 +10,6 @@ from compas.geometry import centroid_points_xy
 from compas.plugins import plugin
 
 
-__all__ = [
-    'delaunay_triangulation',
-    'constrained_delaunay_triangulation',
-    'conforming_delaunay_triangulation',
-]
-
-
 def _to_vertices_segments_holes(boundary, polylines, polygons):
     if geo(boundary[0]) != geo(boundary[-1]):
         boundary.append(boundary[0])
@@ -80,7 +73,7 @@ def delaunay_triangulation(points):
     """
     data = {'vertices': [point[0:2] for point in points]}
     result = triangulate(data, opts='c')
-    vertices = [[x, y, 0] for x, y in result['vertices']]
+    vertices = [[x, y, 0.0] for x, y in result['vertices']]
     faces = result['triangles']
     return vertices, faces
 
@@ -188,15 +181,6 @@ def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, a
 
     result = triangulate(data, opts=opts)
 
-    vertices = [[x, y, 0] for x, y in result['vertices']]
+    vertices = [[x, y, 0.0] for x, y in result['vertices']]
     faces = result['triangles']
     return vertices, faces
-
-
-# ==============================================================================
-# Main
-# ==============================================================================
-
-if __name__ == '__main__':
-
-    pass

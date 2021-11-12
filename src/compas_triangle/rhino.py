@@ -3,10 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 
 import compas_rhino
-from compas_rhino.geometry import RhinoCurve
-
-
-__all__ = ['discretise_boundary']
+from compas_rhino.conversions import RhinoCurve
 
 
 def discretise_boundary(guids, length):
@@ -15,9 +12,9 @@ def discretise_boundary(guids, length):
         compas_rhino.rs.EnableRedraw(False)
         segments = compas_rhino.rs.ExplodeCurves(guid)
         for segment in segments:
-            curve = RhinoCurve.from_guid(segment)
+            curve = RhinoCurve.from_guid(segment).to_compas()
             N = int(curve.length() / length)
-            points = curve.divide(N, over_space=True)
+            _, points = curve.divide_by_count(N, return_points=True)
             boundary.extend(map(list, points))
         compas_rhino.rs.DeleteObjects(segments)
         compas_rhino.rs.EnableRedraw(True)
@@ -28,16 +25,8 @@ def discretise_constraints(guids, length):
     polylines = []
     if guids:
         for guid in guids:
-            curve = RhinoCurve.from_guid(guid)
+            curve = RhinoCurve.from_guid(guid).to_compas()
             N = int(curve.length() / length)
-            points = curve.divide(N, over_space=True)
+            _, points = curve.divide_by_count(N, return_points=True)
             polylines.append(map(list, points))
     return polylines
-
-
-# ==============================================================================
-# Main
-# ==============================================================================
-
-if __name__ == '__main__':
-    pass

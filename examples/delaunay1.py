@@ -1,5 +1,5 @@
 from compas.datastructures import Mesh
-from compas_plotters import MeshPlotter
+from compas_plotters import Plotter
 from compas_triangle.delaunay import delaunay_triangulation
 
 points = [
@@ -19,8 +19,7 @@ vertices, faces = delaunay_triangulation(points)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 
-plotter = MeshPlotter(mesh, figsize=(8, 5))
-plotter.defaults['vertex.fontsize'] = 6
-plotter.draw_faces()
-plotter.draw_vertices(text='key')
+plotter = Plotter(figsize=(8, 8))
+plotter.add(mesh, sizepolicy='absolute', vertexsize=5.0)
+plotter.zoom_extents()
 plotter.show()
