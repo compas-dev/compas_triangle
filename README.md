@@ -1,5 +1,9 @@
 # COMPAS Triangle
 
+> [!WARNING]
+> This package is deprecated and will be removed in the future.
+> Please use [compas_cgal](https://github.com/compas-dev/compas_cgal) instead.
+
 COMPAS-firendly wrappers for the Triangle library.
 
 ## Getting Started
