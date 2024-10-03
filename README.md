@@ -1,7 +1,7 @@
 # COMPAS Triangle
 
 > [!WARNING]
-> This package is deprecated due to equivalent method in cgal package and will be removed in the future.
+> This package is deprecated and will be removed in the future.
 > Please use [compas_cgal](https://github.com/compas-dev/compas_cgal) instead
 
 COMPAS-firendly wrappers for the Triangle library.
