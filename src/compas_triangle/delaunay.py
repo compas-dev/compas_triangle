@@ -1,16 +1,27 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from typing import Annotated
+from typing import Optional
 
-from triangle import triangulate
-from compas.utilities import pairwise
-from compas.utilities import geometric_key_xy as geo
 from compas.geometry import centroid_points_xy
-
+from compas.itertools import pairwise
 from compas.plugins import plugin
+from compas.tolerance import TOL
+from triangle import triangulate
+
+geo = TOL.geometric_key_xy
 
 
-def _to_vertices_segments_holes(boundary, polylines, polygons):
+Point = Annotated[list[float], 3]
+Polyline = list[Point]
+Polygon = list[Point]
+Segment = tuple[int, int]
+Triangle = tuple[int, int, int]
+
+
+def _to_vertices_segments_holes(
+    boundary: list[Point],
+    polylines: list[Polyline],
+    polygons: list[Polygon],
+) -> tuple[list[Point], list[Segment], list[Point]]:
     if geo(boundary[0]) != geo(boundary[-1]):
         boundary.append(boundary[0])
 
@@ -47,8 +58,8 @@ def _to_vertices_segments_holes(boundary, polylines, polygons):
     return vertices, segments, holes
 
 
-@plugin(category='triangulation')
-def delaunay_triangulation(points):
+@plugin(category="triangulation")
+def delaunay_triangulation(points: list[Point]) -> tuple[list[Point], list[Triangle]]:
     """Construct a Delaunay triangulation of set of vertices.
 
     Parameters
@@ -62,24 +73,24 @@ def delaunay_triangulation(points):
         * The vertices of the triangulation.
         * The faces of the triangulation.
 
-    Examples
-    --------
-    >>>
-
     References
     ----------
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
 
     """
-    data = {'vertices': [point[0:2] for point in points]}
-    result = triangulate(data, opts='c')
-    vertices = [[x, y, 0.0] for x, y in result['vertices']]
-    faces = result['triangles']
+    data = {"vertices": [point[0:2] for point in points]}
+    result = triangulate(data, opts="c")
+    vertices = [[x, y, 0.0] for x, y in result["vertices"]]
+    faces = result["triangles"]
     return vertices, faces
 
 
-@plugin(category='triangulation')
-def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
+@plugin(category="triangulation")
+def constrained_delaunay_triangulation(
+    boundary: list[Point],
+    polylines: Optional[list[Polyline]] = None,
+    polygons: Optional[list[Polygon]] = None,
+) -> tuple[list[Point], list[Triangle]]:
     """Construct a Delaunay triangulation of set of vertices, constrained to the specified segments.
 
     Parameters
@@ -101,10 +112,6 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     -----
     No additional points will be inserted in the triangulation.
 
-    Examples
-    --------
-    >>>
-
     References
     ----------
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
@@ -112,20 +119,26 @@ def constrained_delaunay_triangulation(boundary, polylines=None, polygons=None):
     """
     vertices, segments, holes = _to_vertices_segments_holes(boundary, polylines, polygons)
 
-    data = {'vertices': vertices, 'segments': segments}
+    data = {"vertices": vertices, "segments": segments}
 
     if len(holes) > 0:
-        data['holes'] = holes
+        data["holes"] = holes
 
-    result = triangulate(data, opts='p')
+    result = triangulate(data, opts="p")
 
-    vertices = [[x, y, 0.0] for x, y in result['vertices']]
-    faces = result['triangles']
+    vertices = [[x, y, 0.0] for x, y in result["vertices"]]
+    faces = result["triangles"]
     return vertices, faces
 
 
-@plugin(category='triangulation')
-def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, angle=None, area=None):
+@plugin(category="triangulation")
+def conforming_delaunay_triangulation(
+    boundary: list[Point],
+    polylines: Optional[list[Polyline]] = None,
+    polygons: Optional[list[Polygon]] = None,
+    angle: Optional[float] = None,
+    area: Optional[float] = None,
+) -> tuple[list[Point], list[Triangle]]:
     """Construct a Conforming Delaunay triangulation of set of vertices, constrained to the specified segments.
 
     Parameters
@@ -152,10 +165,6 @@ def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, a
         * The vertices of the triangulation.
         * The faces of the triangulation.
 
-    Examples
-    --------
-    >>>
-
     References
     ----------
     https://www.cs.cmu.edu/~quake/triangle.delaunay.html
@@ -163,24 +172,24 @@ def conforming_delaunay_triangulation(boundary, polylines=None, polygons=None, a
     """
     vertices, segments, holes = _to_vertices_segments_holes(boundary, polylines, polygons)
 
-    data = {'vertices': vertices, 'segments': segments}
+    data = {"vertices": vertices, "segments": segments}
 
     if len(holes) > 0:
-        data['holes'] = holes
+        data["holes"] = holes
 
-    opts = 'pq'
+    opts = "pq"
 
     if angle:
-        opts = '{}{}'.format(opts, angle)
+        opts = "{}{}".format(opts, angle)
 
     if area:
-        opts = '{}a{}'.format(opts, area)
+        opts = "{}a{}".format(opts, area)
 
-    if opts == 'pq':
-        opts = 'pq0D'
+    if opts == "pq":
+        opts = "pq0D"
 
     result = triangulate(data, opts=opts)
 
-    vertices = [[x, y, 0.0] for x, y in result['vertices']]
-    faces = result['triangles']
+    vertices = [[x, y, 0.0] for x, y in result["vertices"]]
+    faces = result["triangles"]
     return vertices, faces
