@@ -1,29 +1,21 @@
 # COMPAS Triangle
 
-> [!WARNING]
-> This package is deprecated and will be removed in the future.
-> Please use [compas_cgal](https://github.com/compas-dev/compas_cgal) instead.
-
 COMPAS-firendly wrappers for the Triangle library.
 
-## Getting Started
+## Installation
 
-`compas_triangle` can be installed from PyPI.
+Stable releases can be installed from PyPI.
 
 ```bash
 pip install compas_triangle
 ```
 
-or from local source using pip
+To install the latest version for development, do:
 
 ```bash
-pip install path/to/compas_triangle
-```
-
-or directly from the github repo.
-
-```bash
-pip install git+https://github.com/blockresearchgroup/compas_triangle.git#egg=compas_triangle
+git clone https://github.com/blockresearchgroup/compas_triangle.git
+cd compas_triangle
+pip install -e ".[dev]"
 ```
 
 ## License
@@ -34,15 +26,6 @@ The Cython wrapper is available here: <https://github.com/drufat/triangle>
 Use of the Triangle library is restricted to personal or academic purposes.
 The license of the library is included in this repo: [LICENSE.Triangle](LICENSE.Triangle)
 
-## Examples
+## Issue Tracker
 
-Four examples are available:
-
-* examples/delaunay1.py
-* examples/delaunay2.py
-* examples/delaunay3.py
-* examples/delaunay4_rhino.py
-
-Note that the Rhino example uses `compas.rpc` to provide a proxy for the package.
-
-![Example delaunay3.py](examples/delaunay3.png)
+If you find a bug or if you have a problem with running the code, please file an issue on the [Issue Tracker](https://github.com/compas-dev/compas_triangle/issues).
