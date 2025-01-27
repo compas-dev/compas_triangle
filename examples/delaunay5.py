@@ -1,6 +1,8 @@
-from compas_plotters import Plotter
-from compas.geometry import Polygon, Translation
 from compas.datastructures import Mesh
+from compas.geometry import Polygon
+from compas.geometry import Translation
+from compas_viewer import Viewer
+
 from compas_triangle.delaunay import conforming_delaunay_triangulation
 
 # ==============================================================================
@@ -31,7 +33,6 @@ mesh = Mesh.from_vertices_and_faces(V, F)
 # Viz
 # ==============================================================================
 
-plotter = Plotter(figsize=(8, 8))
-plotter.add(mesh, sizepolicy='absolute', vertexsize=5)
-plotter.zoom_extents()
-plotter.show()
+viewer = Viewer()
+viewer.scene.add(mesh, show_points=True)
+viewer.show()

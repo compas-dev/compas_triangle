@@ -1,6 +1,7 @@
 from compas.datastructures import Mesh
-from compas.utilities import geometric_key
-from compas_plotters import Plotter
+from compas.tolerance import TOL
+from compas_viewer import Viewer
+
 from compas_triangle.delaunay import conforming_delaunay_triangulation
 
 points = [
@@ -13,22 +14,21 @@ points = [
     [7.710581229980631, 7.9254234389408875, 0.0],
     [7.847933566240888, 6.414547740078039, 0.0],
     [3.9104999267801377, 4.9036720412151915, 0.0],
-    [5.2909301507195865, 6.342692886748852, 0.0]
+    [5.2909301507195865, 6.342692886748852, 0.0],
 ]
 
 vertices, faces = conforming_delaunay_triangulation(points, angle=30, area=0.5)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 
-gkey_key = mesh.gkey_key()
+gkey_key = mesh.gkey_vertex()
 key_index = {}
 
 for index, point in enumerate(points):
-    gkey = geometric_key(point)
+    gkey = TOL.geometric_key(point)
     if gkey in gkey_key:
         key_index[gkey_key[gkey]] = str(index)
 
-plotter = Plotter(figsize=(8, 8))
-plotter.add(mesh, sizepolicy='absolute', vertexsize=2.0)
-plotter.zoom_extents()
-plotter.show()
+viewer = Viewer()
+viewer.scene.add(mesh, show_points=True)
+viewer.show()

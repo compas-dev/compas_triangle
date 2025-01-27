@@ -1,5 +1,6 @@
 from compas.datastructures import Mesh
-from compas_plotters import Plotter
+from compas_viewer import Viewer
+
 from compas_triangle.delaunay import delaunay_triangulation
 
 points = [
@@ -12,14 +13,13 @@ points = [
     [7.710581229980631, 7.9254234389408875, 0.0],
     [7.847933566240888, 6.414547740078039, 0.0],
     [3.9104999267801377, 4.9036720412151915, 0.0],
-    [5.2909301507195865, 6.342692886748852, 0.0]
+    [5.2909301507195865, 6.342692886748852, 0.0],
 ]
 
 vertices, faces = delaunay_triangulation(points)
 
 mesh = Mesh.from_vertices_and_faces(vertices, faces)
 
-plotter = Plotter(figsize=(8, 8))
-plotter.add(mesh, sizepolicy='absolute', vertexsize=5.0)
-plotter.zoom_extents()
-plotter.show()
+viewer = Viewer()
+viewer.scene.add(mesh, show_points=True)
+viewer.show()
