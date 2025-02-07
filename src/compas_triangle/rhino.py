@@ -18,7 +18,7 @@ def discretise_boundary(guids, length):
             curve: Curve = guid_to_compas_curve(segment)
             N = int(curve.length() / length)
             _, points = curve.divide_by_count(N, return_points=True)
-            boundary.extend(map(list, points))
+            boundary.extend(points)
 
         rs.DeleteObjects(segments)
         rs.EnableRedraw(True)
@@ -32,5 +32,5 @@ def discretise_constraints(guids, length):
             curve: Curve = guid_to_compas_curve(guid)
             N = int(curve.length() / length)
             _, points = curve.divide_by_count(N, return_points=True)
-            polylines.append(map(list, points))
+            polylines.append(points)
     return polylines

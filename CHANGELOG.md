@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+* Changed `compas_triangle.rhino.discretise_boundary` and `compas_triangle.rhino.discretise_constraint` to not convert points to lists.
+
 ### Removed
 
 
